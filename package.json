@@ -1,0 +1,17 @@
+{
+  "name": "audio-notes",
+  "private": true,
+  "workspaces": [
+    "audiopen"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace audiopen",
+    "build": "npm run build --workspace audiopen",
+    "start": "npm run start --workspace audiopen",
+    "lint": "npm run lint --workspace audiopen",
+    "db:migrate": "npm run db:migrate --workspace audiopen",
+    "db:studio": "npm run db:studio --workspace audiopen",
+    "setup": "npm install && npm run db:migrate"
+  }
+}
+

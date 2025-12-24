@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum NoteStatus {
+  PROCESSING
+  READY
+  ERROR
+}
+
+enum NoteStyle {
+  DEFAULT
+  MEETING
+  JOURNAL
+  IDEA
+}
+
+model Note {
+  id          String     @id @default(cuid())
+  ownerKey    String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  status      NoteStatus @default(PROCESSING)
+  style       NoteStyle  @default(DEFAULT)
+
+  audioPath   String?
+  audioMime   String?
+  durationSec Int?
+  language    String?
+
+  rawTranscript String?
+  transcript    String?
+
+  title       String?
+  summary     String?
+  noteMd      String?
+  bullets     Json?
+  actionItems Json?
+
+  // 2% change vs Audiopen: generate clarification follow-up questions
+  followUps   Json?
+
+  isPublic    Boolean    @default(false)
+  shareId     String?    @unique
+
+  error       String?
+
+  @@index([ownerKey, createdAt])
+  @@index([shareId])
+}
