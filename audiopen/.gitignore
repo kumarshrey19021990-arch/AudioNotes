@@ -43,3 +43,6 @@ next-env.d.ts
 # local sqlite + uploads
 /prisma/dev.db
 /.data/
+
+# legacy prisma init artifact at project root
+/dev.db
