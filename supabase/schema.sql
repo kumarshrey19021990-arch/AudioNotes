@@ -16,7 +16,6 @@ create table if not exists public.entries (
 );
 
 -- If the table already existed, ensure required columns exist
-alter table public.entries add column if not exists id uuid;
 alter table public.entries add column if not exists user_id uuid;
 alter table public.entries add column if not exists title text;
 alter table public.entries add column if not exists transcript text;
@@ -25,9 +24,43 @@ alter table public.entries add column if not exists duration_seconds integer;
 alter table public.entries add column if not exists created_at timestamptz;
 
 -- Ensure defaults / backfills for existing rows (safe for old tables)
-alter table public.entries alter column id set default gen_random_uuid();
+-- Note: if your existing `entries.id` is an IDENTITY column (bigint/int),
+-- we must NOT change its default or backfill UUIDs.
+do $$
+declare
+  id_is_identity boolean;
+  id_is_uuid boolean;
+begin
+  select (a.attidentity <> '')
+    into id_is_identity
+  from pg_attribute a
+  join pg_class c on c.oid = a.attrelid
+  join pg_namespace n on n.oid = c.relnamespace
+  where n.nspname = 'public'
+    and c.relname = 'entries'
+    and a.attname = 'id'
+    and a.attnum > 0
+    and not a.attisdropped;
+
+  select (t.typname = 'uuid')
+    into id_is_uuid
+  from pg_attribute a
+  join pg_class c on c.oid = a.attrelid
+  join pg_namespace n on n.oid = c.relnamespace
+  join pg_type t on t.oid = a.atttypid
+  where n.nspname = 'public'
+    and c.relname = 'entries'
+    and a.attname = 'id'
+    and a.attnum > 0
+    and not a.attisdropped;
+
+  if coalesce(id_is_identity, false) = false and coalesce(id_is_uuid, false) = true then
+    alter table public.entries alter column id set default gen_random_uuid();
+    update public.entries set id = gen_random_uuid() where id is null;
+  end if;
+end $$;
+
 alter table public.entries alter column created_at set default now();
-update public.entries set id = gen_random_uuid() where id is null;
 update public.entries set created_at = now() where created_at is null;
 
 -- Ensure primary key exists (if the table pre-existed without it)
