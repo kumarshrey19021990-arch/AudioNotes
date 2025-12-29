@@ -9,32 +9,38 @@ export function EntryList({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  async function load() {
-    setLoading(true);
-    setError(null);
+  useEffect(() => {
+    let mounted = true;
 
-    const { data, error: err } = await supabase
-      .from("entries")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    async function load() {
+      setLoading(true);
+      setError(null);
 
-    if (err) {
-      setError(err.message);
-      setEntries([]);
+      const { data, error: err } = await supabase
+        .from("entries")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (!mounted) return;
+
+      if (err) {
+        setError(err.message);
+        setEntries([]);
+        setLoading(false);
+        return;
+      }
+
+      setEntries(Array.isArray(data) ? data : []);
       setLoading(false);
-      return;
     }
 
-    setEntries(Array.isArray(data) ? data : []);
-    setLoading(false);
-  }
-
-  useEffect(() => {
     void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user.id]);
+    return () => {
+      mounted = false;
+    };
+  }, [supabase, user.id]);
 
   if (loading) {
     return (
@@ -58,7 +64,11 @@ export function EntryList({ user }) {
             {error}
           </div>
         </div>
-        <button type="button" className="chip" onClick={() => void load()}>
+        <button
+          type="button"
+          className="chip"
+          onClick={() => window.location.reload()}
+        >
           Retry
         </button>
       </div>
