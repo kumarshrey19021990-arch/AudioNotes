@@ -1,0 +1,42 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1020"/>
+      <stop offset="0.55" stop-color="#1B1E6A"/>
+      <stop offset="1" stop-color="#0B1020"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 330) rotate(90) scale(260 260)">
+      <stop stop-color="#FF4D9D" stop-opacity="0.9"/>
+      <stop offset="0.5" stop-color="#5A7BFF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0B1020" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="430" y1="330" x2="770" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5A7BFF"/>
+      <stop offset="0.5" stop-color="#A855F7"/>
+      <stop offset="1" stop-color="#FF4D9D"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="600" cy="330" r="260" fill="url(#glow)"/>
+  <g opacity="0.9">
+    <circle cx="600" cy="330" r="170" stroke="url(#ring)" stroke-width="14"/>
+    <circle cx="600" cy="330" r="155" stroke="white" stroke-opacity="0.12" stroke-width="2"/>
+  </g>
+  <g transform="translate(560 285)" opacity="0.95">
+    <rect x="18" y="12" width="44" height="72" rx="22" fill="white" fill-opacity="0.95"/>
+    <path d="M40 96C61 96 78 79 78 58V44" stroke="white" stroke-opacity="0.95" stroke-width="10" stroke-linecap="round"/>
+    <path d="M40 96C19 96 2 79 2 58V44" stroke="white" stroke-opacity="0.95" stroke-width="10" stroke-linecap="round"/>
+    <path d="M40 96V112" stroke="white" stroke-opacity="0.95" stroke-width="10" stroke-linecap="round"/>
+    <path d="M22 112H58" stroke="white" stroke-opacity="0.95" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <text x="80" y="180" fill="white" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="64" font-weight="700">
+    Voice Journal
+  </text>
+  <text x="80" y="245" fill="white" opacity="0.85" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="34" font-weight="500">
+    Voice notes " Audio to text " Voice to text
+  </text>
+  <text x="80" y="520" fill="white" opacity="0.7" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial" font-size="26">
+    Record, transcribe, and save your thoughts.
+  </text>
+</svg>
+
