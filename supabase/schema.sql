@@ -123,43 +123,61 @@ create policy "entries_delete_own"
 --   insert into storage.buckets (id, name, public) values ('audio', 'audio', false);
 
 -- Storage RLS: allow authenticated users to manage their own audio files
--- Note: storage policies apply to storage.objects.
+-- Note: storage policies apply to storage.objects and may require elevated permissions.
+-- If you see: "must be owner of table objects", create these in the Supabase Dashboard
+-- (Storage -> Policies) or run this block as the database owner.
 -- We store audio at: <user_id>/<uuid>.webm
-alter table storage.objects enable row level security;
+do $$
+begin
+  begin
+    execute 'alter table storage.objects enable row level security';
 
-drop policy if exists "audio_read_own" on storage.objects;
-create policy "audio_read_own"
-  on storage.objects for select
-  using (
-    bucket_id = 'audio'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+    execute 'drop policy if exists "audio_read_own" on storage.objects';
+    execute $pol$
+      create policy "audio_read_own"
+        on storage.objects for select
+        using (
+          bucket_id = 'audio'
+          and auth.uid()::text = (storage.foldername(name))[1]
+        )
+    $pol$;
 
-drop policy if exists "audio_insert_own" on storage.objects;
-create policy "audio_insert_own"
-  on storage.objects for insert
-  with check (
-    bucket_id = 'audio'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+    execute 'drop policy if exists "audio_insert_own" on storage.objects';
+    execute $pol$
+      create policy "audio_insert_own"
+        on storage.objects for insert
+        with check (
+          bucket_id = 'audio'
+          and auth.uid()::text = (storage.foldername(name))[1]
+        )
+    $pol$;
 
-drop policy if exists "audio_update_own" on storage.objects;
-create policy "audio_update_own"
-  on storage.objects for update
-  using (
-    bucket_id = 'audio'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  )
-  with check (
-    bucket_id = 'audio'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+    execute 'drop policy if exists "audio_update_own" on storage.objects';
+    execute $pol$
+      create policy "audio_update_own"
+        on storage.objects for update
+        using (
+          bucket_id = 'audio'
+          and auth.uid()::text = (storage.foldername(name))[1]
+        )
+        with check (
+          bucket_id = 'audio'
+          and auth.uid()::text = (storage.foldername(name))[1]
+        )
+    $pol$;
 
-drop policy if exists "audio_delete_own" on storage.objects;
-create policy "audio_delete_own"
-  on storage.objects for delete
-  using (
-    bucket_id = 'audio'
-    and auth.uid()::text = (storage.foldername(name))[1]
-  );
+    execute 'drop policy if exists "audio_delete_own" on storage.objects';
+    execute $pol$
+      create policy "audio_delete_own"
+        on storage.objects for delete
+        using (
+          bucket_id = 'audio'
+          and auth.uid()::text = (storage.foldername(name))[1]
+        )
+    $pol$;
+  exception
+    when insufficient_privilege then
+      raise notice 'Skipped storage.objects RLS policies: insufficient privileges. Create Storage policies in Supabase Dashboard (Storage -> Policies).';
+  end;
+end $$;
 
