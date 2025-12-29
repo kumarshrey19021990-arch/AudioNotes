@@ -40,24 +40,34 @@ export function EntryList({ user }: { user: User }) {
 
   if (loading) {
     return (
-      <div className="grid gap-3">
+      <>
         {[0, 1, 2].map((k) => (
           <div
             key={k}
-            className="h-[60px] rounded-2xl border border-white/10 bg-white/5"
-          />
+            className="vj-entry"
+            style={{ opacity: 0.6, justifyContent: "flex-start" }}
+          >
+            <div className="vj-entry-title" style={{ width: "60%" }}>
+              Loading…
+            </div>
+            <div className="vj-entry-time">—</div>
+          </div>
         ))}
-      </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4">
-        <p className="text-sm text-red-200">Couldn’t load entries: {error}</p>
+      <div className="vj-entry" style={{ justifyContent: "space-between" }}>
+        <div>
+          <div className="vj-entry-title">Couldn’t load entries</div>
+          <div className="vj-entry-time">{error}</div>
+        </div>
         <button
           onClick={() => void load()}
-          className="mt-3 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-[#070A19]"
+          className="rounded-lg bg-white/15 px-3 py-2 text-xs font-semibold text-white hover:bg-white/20"
+          type="button"
         >
           Retry
         </button>
@@ -67,37 +77,32 @@ export function EntryList({ user }: { user: User }) {
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-        <p className="text-sm text-white/70">
-          No voice notes yet. Tap record to create your first audio to text entry.
-        </p>
+      <div className="vj-entry" style={{ justifyContent: "flex-start" }}>
+        <div>
+          <div className="vj-entry-title">No entries yet</div>
+          <div className="vj-entry-time">
+            Tap record to create your first voice note.
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-3">
+    <>
       {entries.map((e) => (
         <Link
           key={e.id}
           href={`/app/entries/${e.id}`}
-          className="group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 hover:bg-white/10"
+          className="vj-entry"
         >
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-white/90">
-              {e.title?.trim() ? e.title : "Untitled voice note"}
-            </p>
-            <p className="truncate text-xs text-white/60">
-              {formatDateTimeShort(e.created_at)}
-              {e.transcript?.trim()
-                ? ` · ${e.transcript.trim().slice(0, 60)}`
-                : ""}
-            </p>
+          <div className="vj-entry-title">
+            {e.title?.trim() ? e.title : "Untitled voice note"}
           </div>
-          <div className="ml-4 h-9 w-9 rounded-xl bg-white/10 ring-1 ring-white/10 group-hover:bg-white/15" />
+          <div className="vj-entry-time">{formatDateTimeShort(e.created_at)}</div>
         </Link>
       ))}
-    </div>
+    </>
   );
 }
 
